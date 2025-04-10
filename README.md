@@ -25,7 +25,7 @@
 git clone https://github.com/ziltorian/archive-keeper-bot.git
 cd archive-keeper-bot
 python -m venv .venv
-venv\Scripts\activate        # Windows
+.venv\Scripts\activate        # Windows
 # или
 source venv/bin/activate     # Linux/macOS
 
