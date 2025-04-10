@@ -8,7 +8,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Router
 from openai import OpenAI
-from dotenv import load_dotenv
+from config import TELEGRAM_TOKEN, OPENAI_API_KEY
 from logger_setup import logger as log
 
 # импортируем переменные
@@ -24,14 +24,9 @@ from config import (
     GLOSSARY_TRIGGER_WORD
 )
 
-# Загружаем токены из .env
-load_dotenv()
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
 # Проверка, что переменные окружения загружены
 if not TELEGRAM_TOKEN or not OPENAI_API_KEY:
-    raise ValueError("Отсутствуют TELEGRAM_BOT_TOKEN или OPENAI_API_KEY в .env файле.")
+    raise ValueError("Отсутствуют TELEGRAM_BOT_TOKEN или OPENAI_API_KEY в .env.prod файле.")
 
 # Инициализируем бота
 bot = Bot(token=TELEGRAM_TOKEN)
@@ -50,7 +45,6 @@ try:
 except Exception as e:
     log.error(f"❌ Ошибка подключения к OpenAI: {e}")
     client = None  # отключаем OpenAI, чтобы не использовать дальше
-
 
 # Загрузка глоссария
 with open("archive/Глоссарий_Хранителя_Архива.json", "r", encoding="utf-8") as f:
@@ -279,9 +273,9 @@ async def handle_message(message: types.Message):
                 messages=messages
             )
             log.info(f"🤖 Ответ от OpenAI: {response}")
-        except Exception as e:
+        except Exception as api_error:
             await message.reply("Что-то пошло не так...")
-            log.error(f"⚠️ OpenAI API error: {e}")
+            log.error(f"⚠️ OpenAI API error: {api_error}")
             return
 
         # 4. Получение ответа и отправка в чат
@@ -296,11 +290,13 @@ async def handle_message(message: types.Message):
 async def main():
     await dp.start_polling(bot)
 
+
 if __name__ == "__main__":
     log.info("Бот запускается...")
     try:
         asyncio.run(main())
-    except Exception as e:
+    except Exception as fatal:  # ловим любые исключения для перезапуска
         import traceback
-        log.error("‼️ Критическая ошибка:")
+
+        log.error(f"‼️ Критическая ошибка: {fatal}")
         traceback.print_exc()

@@ -7,6 +7,7 @@ echo 🔄 Обновление проекта из GitHub...
 git pull
 
 echo 🟢 Запуск Telegram-бота...
+set BOT_ENV=dev
 python bot.py
 set errorlevel_code=%ERRORLEVEL%
 
