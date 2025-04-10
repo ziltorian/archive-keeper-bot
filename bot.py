@@ -1,6 +1,7 @@
 import os
 import glob
 import re
+import asyncio
 from difflib import SequenceMatcher
 import json
 from aiogram import Bot, Dispatcher, types
@@ -295,9 +296,11 @@ async def handle_message(message: types.Message):
 async def main():
     await dp.start_polling(bot)
 
-
 if __name__ == "__main__":
     log.info("Бот запускается...")
-    import asyncio
-
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        import traceback
+        log.error("‼️ Критическая ошибка:")
+        traceback.print_exc()

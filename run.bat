@@ -1,11 +1,15 @@
 @echo off
+chcp 65001 >nul
+
 :loop
 cls
-echo Запуск Telegram-бота...
+echo 🟢 Запуск Telegram-бота...
+
 python bot.py
+set errorlevel_code=%ERRORLEVEL%
 
 echo.
-echo ❗ Бот завершил работу (или произошла ошибка).
+echo ❗ Бот завершил работу. Код возврата: %errorlevel_code%
 echo 🔁 Перезапуск через 2 секунды...
 timeout /t 2 >nul
 goto loop
