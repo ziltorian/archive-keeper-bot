@@ -3,8 +3,10 @@ chcp 65001 >nul
 
 :loop
 cls
-echo 🟢 Запуск Telegram-бота...
+echo 🔄 Обновление проекта из GitHub...
+git pull
 
+echo 🟢 Запуск Telegram-бота...
 python bot.py
 set errorlevel_code=%ERRORLEVEL%
 
